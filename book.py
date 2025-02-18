@@ -109,9 +109,29 @@ class address_book_info:
                         else:
                             print("Invalid key. Try again.")
                             continue
-                else:
-                  print("Contact not found. Try again.")
-                  continue
+            else:
+               print("Contact not found Try again")
+               continue
+    
+    def delete_address(self):
+
+        '''
+        Descrption:to delete the existing user from the address book
+        parameter:None
+        return:None
+        '''
+
+        while True:
+            first=input("enter the fist name to delete : ")
+            last=input("enter the last name to delete : ")
+            for i in range (len(self.contacts)):
+                if self.contacts[i]['first_name'] == first and self.contacts[i]['last_name']==last:
+                    del self.contacts[i]
+                    print("\nsuccessfully deleted the address")
+                    return
+            else:
+               print("contact not found  try again")
+               continue
 
 class Address_book:
 
@@ -138,6 +158,7 @@ class Address_book:
             print("2 to display contact")
             print("3 to exit contact")
             print("4 to edit existing user")
+            print("5 to delete the address")
             value= input(" \nenter the value : ")
             if value == '1':
                 self.address_book.add_contact()
@@ -148,7 +169,8 @@ class Address_book:
                 break
             elif value == '4':
                 self.address_book.edit_details()
-
+            elif value == '5':
+                self.address_book.delete_address()
             else:
                 print("invalid number")
 
