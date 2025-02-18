@@ -74,7 +74,7 @@ class address_book_info:
             print("address book contacts")
             for i in self.contacts:
                 print(i)
-                
+
     def edit_details(self): 
 
           '''
@@ -109,7 +109,6 @@ class address_book_info:
                         else:
                             print("Invalid key. Try again.")
                             continue
-
             else:
                 print("Contact not found. Try again.")
                 continue
