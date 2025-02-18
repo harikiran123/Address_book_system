@@ -74,7 +74,45 @@ class address_book_info:
             print("address book contacts")
             for i in self.contacts:
                 print(i)
-            
+                
+    def edit_details(self): 
+
+          '''
+          Description: To edit the address book details using the first and last name
+          parameters:None
+          retrun:None
+          ''' 
+
+          while True:
+            first = input("Enter the first name you want to edit: ")
+            last = input("Enter the last name you want to edit: ")
+            for i in range(len(self.contacts)):
+                if self.contacts[i]['first_name'] == first and self.contacts[i]['last_name'] == last:
+                    print("\nContact found. You can edit the details now.")
+                    while True:
+                        print("\nAvailable keys: first_name, last_name, address, zip, phone_number, mail")
+                        key = input("Enter the key you need to edit (or type 'exit' to stop editing): ").strip().lower()
+                        if key == 'exit':
+                            print("Editing completed.\n")
+                            return
+                        elif key in self.contacts[i]:
+                            if key == 'zip':
+                                new_value = self.validate_zip()
+                            elif key == 'phone_number':
+                                new_value = self.validate_phone()
+                            else:
+                                new_value = input(f"Enter new value for {key}: ")
+
+                            self.contacts[i][key] = new_value
+                            print(f"{key} updated successfully.")
+
+                        else:
+                            print("Invalid key. Try again.")
+                            continue
+
+            else:
+                print("Contact not found. Try again.")
+                continue
 
 class Address_book:
 
@@ -100,6 +138,7 @@ class Address_book:
             print("1 to add contact")
             print("2 to display contact")
             print("3 to exit contact")
+            print("4 to edit existing user")
             value= input(" \nenter the value : ")
             if value == '1':
                 self.address_book.add_contact()
@@ -108,6 +147,9 @@ class Address_book:
             elif value == '3':
                 print("exiting program..")
                 break
+            elif value == '4':
+                self.address_book.edit_details()
+
             else:
                 print("invalid number")
 
