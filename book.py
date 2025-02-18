@@ -109,9 +109,9 @@ class address_book_info:
                         else:
                             print("Invalid key. Try again.")
                             continue
-            else:
-                print("Contact not found. Try again.")
-                continue
+                else:
+                  print("Contact not found. Try again.")
+                  continue
 
 class Address_book:
 
