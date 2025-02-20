@@ -40,7 +40,7 @@ class Address_Book_Info:
         '''
 
         while True:
-            phone = input("enter the phone number: ")  
+            phone = input("enter the phone number: ")
             if phone.isdigit() and len(phone) == 10:
                 logger.info(f"valid phone number: {phone}")
                 return phone
@@ -56,17 +56,31 @@ class Address_Book_Info:
         Return: None
         '''
 
-        first_name = input("enter the first name: ")
-        last_name = input("enter the last name: ")
+        while True:
+            first_name = input("enter the first name: ")
+            last_name = input("enter the last name: ")
+
+            for contact in self.contacts:
+                if contact['first_name'] == first_name and contact['last_name'] == last_name:
+                    logger.warning(f"duplicate contact found: {first_name} {last_name}")
+                    print(f"error: contact {first_name} {last_name} already exists Please enter a different name")
+                    print("try with some other names")
+                    break  
+            else:
+                break 
+
         address = input("enter the address: ")
         zip_code = self.validate_zip()
         phone_number = self.validate_phone()
         mail = input("enter the email: ")
 
         contact = {
-            'first_name': first_name, 'last_name': last_name, 
-            'address': address, 'zip': zip_code, 
-            'phone_number': phone_number, 'mail': mail
+            'first_name': first_name, 
+            'last_name': last_name,
+            'address': address, 
+            'zip': zip_code,
+            'phone_number': phone_number, 
+            'mail': mail
         }
         self.contacts.append(contact)
         logger.info(f"Address added: {contact}")
