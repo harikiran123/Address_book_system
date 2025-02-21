@@ -3,21 +3,25 @@ from loggers import logger
 
 class Address_Book_Info:
     def __init__(self, address_book_name):
+
         '''
         Description: Initialize an empty contact list.
         Parameters: address_book_name (str) - Name of the address book.
         Return: None
         '''
+
         logger.info("Initializing Address_Book_Info")
         self.contacts = []
         self.address_book_name = address_book_name
 
     def validate_zip(self):
+
         '''
         Description: Validate the format of the zip code.
         Parameters: None
         Return: Validated zip code (str)
         '''
+
         while True:
             zip_code = input("Enter the zip: ")
             if zip_code.isdigit():
@@ -28,11 +32,13 @@ class Address_Book_Info:
                 print("Error: The input should be an integer.")
 
     def validate_phone(self):
+
         '''
         Description: Validate the format of the phone number.
         Parameters: None
         Return: Validated phone number (str)
         '''
+
         while True:
             phone = input("Enter the phone number: ")
             if phone.isdigit() and len(phone) == 10:
@@ -43,11 +49,13 @@ class Address_Book_Info:
                 print("Error: The phone number should be an integer with exactly 10 digits.")
 
     def add_contact(self):
+
         '''
         Description: Add a new contact to the address book.
         Parameters: None
         Return: None
         '''
+
         while True:
             first_name = input("Enter the first name: ")
             last_name = input("Enter the last name: ")
@@ -79,20 +87,24 @@ class Address_Book_Info:
         print("\nContact added successfully.")
 
     def search_by_city(self, city):
+
         '''
         Description: Search for contacts by city name.
         Parameters: city (str)
         Return: List of contacts in the specified city.
         '''
+
         logger.info(f"Searching contacts in city: {city}")
         return [contact for contact in self.contacts if contact.get('city', '').lower() == city.lower()]
 
     def display_contacts(self):
+
         '''
         Description: Display all contacts in the address book.
         Parameters: None
         Return: None
         '''
+
         if not self.contacts:
             logger.info("No contacts in the address book.")
             print("No contacts in the address book.")
@@ -103,11 +115,13 @@ class Address_Book_Info:
                 print(contact)
 
     def edit_details(self):
+
         '''
         Description: Edit the details of a contact using the first and last name.
         Parameters: None
         Return: None
         '''
+
         while True:
             first = input("Enter the first name of the contact to edit: ")
             last = input("Enter the last name of the contact to edit: ")
@@ -138,11 +152,13 @@ class Address_Book_Info:
                 print("Contact not found. Try again.")
 
     def delete_contact(self):
+
         '''
         Description: Delete an existing contact from the address book.
         Parameters: None
         Return: None
         '''
+        
         while True:
             first = input("Enter the first name of the contact to delete: ")
             last = input("Enter the last name of the contact to delete: ")
@@ -157,11 +173,13 @@ class Address_Book_Info:
                 print("Contact not found. Try again.")
 
     def add_multiple_contacts(self):
+        
         '''
         Description: Add multiple contacts to the address book.
         Parameters: None
         Return: None
         '''
+
         logger.info("Adding multiple contacts.")
         no_of_contacts = int(input("Enter how many contacts you need to add: "))
         for _ in range(no_of_contacts):
@@ -171,20 +189,24 @@ class Address_Book_Info:
 
 class Address_Book_Manager:
     def __init__(self):
+
         '''
         Description: Initialize an empty dictionary for storing multiple address books.
         Parameters: None
         Return: None
         '''
+
         logger.info("Initializing Address_Book_Manager")
         self.address_books = {}
 
     def create_address_book(self):
+
         '''
         Description: Create a new address book with a unique name.
         Parameters: None
         Return: None
         '''
+
         name = input("Enter the name of the new address book: ")
         if name in self.address_books:
             logger.warning("Address book already exists.")
@@ -195,11 +217,13 @@ class Address_Book_Manager:
             print(f"Address book '{name}' created successfully.")
 
     def select_address_book(self):
+
         '''
         Description: Select an existing address book.
         Parameters: None
         Return: Selected Address_Book_Info object or None
         '''
+
         if not self.address_books:
             print("No address books available. Create one first.")
             return None
@@ -215,11 +239,13 @@ class Address_Book_Manager:
             print("Address book not found. Please enter a valid name.")
 
     def search_person_across_books(self):
+
         '''
         Description: Search for a person by city across all address books.
         Parameters: None
         Return: None
         '''
+
         if not self.address_books:
             print("No address books available. Create one first.")
             return
@@ -244,11 +270,13 @@ class Address_Book_Manager:
             print(f"No contacts found in city '{city}'.")
 
     def main(self):
+
         '''
         Description: Provide user choices to manage multiple address books.
         Parameters: None
         Return: None
         '''
+
         while True:
             print("\n1. Create a new address book")
             print("2. Add a contact to an address book")
@@ -282,6 +310,7 @@ class Address_Book_Manager:
             elif choice == '8':
                 self.search_person_across_books()
             else:
+                logger.warning("enter the choise upto 8")
                 print("Invalid choice. Try again.")
 
 
