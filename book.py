@@ -72,6 +72,7 @@ class Address_Book_Info:
         phone_number = self.validate_phone()
         mail = input("Enter the email: ")
         city = input("Enter the city: ")
+        state = input("enter the state: ")
 
         contact = {
             'first_name': first_name,
@@ -80,7 +81,8 @@ class Address_Book_Info:
             'zip': zip_code,
             'phone_number': phone_number,
             'mail': mail,
-            'city': city
+            'city': city,
+            'state':state
         }
         self.contacts.append(contact)
         logger.info(f"Contact added: {contact}")
@@ -95,7 +97,26 @@ class Address_Book_Info:
         '''
 
         logger.info(f"Searching contacts in city: {city}")
-        return [contact for contact in self.contacts if contact.get('city', '').lower() == city.lower()]
+        matching_contacts = []
+        for contact in self.contacts:
+            if contact.get('city', '').lower() == city.lower():
+                matching_contacts.append(contact)
+        return matching_contacts
+
+    def search_by_state(self, state):
+
+        '''
+        Description: Search for contacts by state name.
+        Parameters: city (str)
+        Return: List of contacts in the specified state.
+        '''
+
+        logger.info(f"Searching contacts in city: {state}")
+        matching_contacts = []
+        for contact in self.contacts:
+            if contact.get('state', '').lower() == state.lower():
+                matching_contacts.append(contact)
+        return matching_contacts
 
     def display_contacts(self):
 
@@ -130,7 +151,7 @@ class Address_Book_Info:
                 if contact['first_name'] == first and contact['last_name'] == last:
                     print("\nContact found. You can edit the details now.")
                     while True:
-                        print("\nAvailable keys: first_name, last_name, address, zip, phone_number, mail, city")
+                        print("\nAvailable keys: first_name, last_name, address, zip, phone_number, mail, city,state")
                         key = input("Enter the key you need to edit (or type 'exit' to stop editing): ").strip().lower()
                         if key == 'exit':
                             print("Editing completed.\n")
@@ -268,6 +289,37 @@ class Address_Book_Manager:
                 print(f"{i}. {contact}")
         else:
             print(f"No contacts found in city '{city}'.")
+    
+    def search_person_with_state(self):
+
+        '''
+        Description: Search for a person by state across all address books.
+        Parameters: None
+        Return: None
+        '''
+
+        if not self.address_books:
+            print("No address books available. Create one first.")
+            return
+
+        state = input("Enter the state name: ").strip()
+        if not state:
+            print("Invalid input. Please enter a valid city.")
+            return
+
+        results = []
+        for book_name, book in self.address_books.items():
+            matches = book.search_by_state(state)
+            for contact in matches:
+                contact_info = {**contact, 'Address Book': book_name}
+                results.append(contact_info)
+
+        if results:
+            print("\nSearch Results:")
+            for i, contact in enumerate(results, start=1):
+                print(f"{i}. {contact}")
+        else:
+            print(f"No contacts found in city '{state}'.")
 
     def main(self):
 
@@ -286,6 +338,7 @@ class Address_Book_Manager:
             print("6. Add multiple contacts to an address book")
             print("7. Exit")
             print("8. Search person by city across all address books")
+            print("9. search person by state across all address books")
 
             choice = input("Enter your choice: ")
             if choice == '1':
@@ -309,6 +362,8 @@ class Address_Book_Manager:
                 break
             elif choice == '8':
                 self.search_person_across_books()
+            elif choice == '9':
+                self.search_person_with_state()
             else:
                 logger.warning("enter the choise upto 8")
                 print("Invalid choice. Try again.")
