@@ -72,7 +72,7 @@ class Address_Book_Info:
         phone_number = self.validate_phone()
         mail = input("Enter the email: ")
         city = input("Enter the city: ")
-        state = input("enter the state: ")
+        state = input("Enter the state: ")
 
         contact = {
             'first_name': first_name,
@@ -82,7 +82,7 @@ class Address_Book_Info:
             'phone_number': phone_number,
             'mail': mail,
             'city': city,
-            'state':state
+            'state': state
         }
         self.contacts.append(contact)
         logger.info(f"Contact added: {contact}")
@@ -107,11 +107,11 @@ class Address_Book_Info:
 
         '''
         Description: Search for contacts by state name.
-        Parameters: city (str)
+        Parameters: state (str)
         Return: List of contacts in the specified state.
         '''
 
-        logger.info(f"Searching contacts in city: {state}")
+        logger.info(f"Searching contacts in state: {state}")
         matching_contacts = []
         for contact in self.contacts:
             if contact.get('state', '').lower() == state.lower():
@@ -151,7 +151,7 @@ class Address_Book_Info:
                 if contact['first_name'] == first and contact['last_name'] == last:
                     print("\nContact found. You can edit the details now.")
                     while True:
-                        print("\nAvailable keys: first_name, last_name, address, zip, phone_number, mail, city,state")
+                        print("\nAvailable keys: first_name, last_name, address, zip, phone_number, mail, city, state")
                         key = input("Enter the key you need to edit (or type 'exit' to stop editing): ").strip().lower()
                         if key == 'exit':
                             print("Editing completed.\n")
@@ -179,7 +179,7 @@ class Address_Book_Info:
         Parameters: None
         Return: None
         '''
-        
+
         while True:
             first = input("Enter the first name of the contact to delete: ")
             last = input("Enter the last name of the contact to delete: ")
@@ -194,7 +194,7 @@ class Address_Book_Info:
                 print("Contact not found. Try again.")
 
     def add_multiple_contacts(self):
-        
+
         '''
         Description: Add multiple contacts to the address book.
         Parameters: None
@@ -289,7 +289,7 @@ class Address_Book_Manager:
                 print(f"{i}. {contact}")
         else:
             print(f"No contacts found in city '{city}'.")
-    
+
     def search_person_with_state(self):
 
         '''
@@ -304,7 +304,7 @@ class Address_Book_Manager:
 
         state = input("Enter the state name: ").strip()
         if not state:
-            print("Invalid input. Please enter a valid city.")
+            print("Invalid input. Please enter a valid state.")
             return
 
         results = []
@@ -319,7 +319,53 @@ class Address_Book_Manager:
             for i, contact in enumerate(results, start=1):
                 print(f"{i}. {contact}")
         else:
-            print(f"No contacts found in city '{state}'.")
+            print(f"No contacts found in state '{state}'.")
+
+    def search_person_city_state(self):
+
+        '''
+        Description: Search for a person by city or state across all address books.
+        Parameters: None
+        Return: None
+        '''
+
+        if not self.address_books:
+            print("No address books available. Create one first.")
+            return
+
+        search_query = input("Enter the city or state to search: ").strip().lower()
+        if not search_query:
+            print("Invalid input. Please enter a valid city or state.")
+            return
+
+        results = []
+        for book_name, book in self.address_books.items():
+            
+            city_matches = book.search_by_city(search_query)
+            for contact in city_matches:
+                contact_info = {**contact, 'Address Book': book_name}
+                results.append(contact_info)
+
+            
+            state_matches = book.search_by_state(search_query)
+            for contact in state_matches:
+                contact_info = {**contact, 'Address Book': book_name}
+                results.append(contact_info)
+
+        unique_results = []
+        seen_contacts = set()
+        for contact in results:
+            contact_id = f"{contact['first_name']}_{contact['last_name']}"
+            if contact_id not in seen_contacts:
+                unique_results.append(contact)
+                seen_contacts.add(contact_id)
+
+        if unique_results:
+            print("\nSearch Results:")
+            for i, contact in enumerate(unique_results, start=1):
+                print(f"{i}. {contact}")
+        else:
+            print(f"No contacts found in '{search_query}'.")
 
     def main(self):
 
@@ -338,7 +384,8 @@ class Address_Book_Manager:
             print("6. Add multiple contacts to an address book")
             print("7. Exit")
             print("8. Search person by city across all address books")
-            print("9. search person by state across all address books")
+            print("9. Search person by state across all address books")
+            print("10. Search person by city or state across all address books")
 
             choice = input("Enter your choice: ")
             if choice == '1':
@@ -364,8 +411,10 @@ class Address_Book_Manager:
                 self.search_person_across_books()
             elif choice == '9':
                 self.search_person_with_state()
+            elif choice == '10':
+                self.search_person_city_state()
             else:
-                logger.warning("enter the choise upto 8")
+                logger.warning("Invalid choice. Please enter a number between 1 and 10.")
                 print("Invalid choice. Try again.")
 
 
