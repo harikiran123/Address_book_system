@@ -223,6 +223,19 @@ class Address_Book_Info:
         print("\nContacts sorted by name successfully.")
         self.display_contacts()
 
+    def sort_contacts_by_state(self):
+
+        '''
+        Description: Sort contacts alphabetically by state .
+        Parameters: None
+        Return: None
+        '''
+
+        logger.info("Sorting contacts by state.")
+        self.contacts.sort(key=lambda x: x['state'].lower())
+        print("\nContacts sorted by state successfully.")
+        self.display_contacts()
+
 
 class Address_Book_Manager:
 
@@ -403,11 +416,12 @@ class Address_Book_Manager:
             print("9. Search person by state across all address books")
             print("10. Search person by city or state across all address books")
             print("11. Sort contacts by name in an address book")
+            print("12. sort contact by state in the address book")
 
             choice = input("Enter your choice: ")
             if choice == '1':
                 self.create_address_book()
-            elif choice in {'2', '3', '4', '5', '6', '11'}:
+            elif choice in {'2', '3', '4', '5', '6', '11','12'}:
                 book = self.select_address_book()
                 if book:
                     if choice == '2':
@@ -422,6 +436,8 @@ class Address_Book_Manager:
                         book.add_multiple_contacts()
                     elif choice == '11':
                         book.sort_contacts_by_name()
+                    elif choice == '12':
+                        book.sort_contacts_by_state()
             elif choice == '7':
                 logger.info("User exited the program.")
                 print("Exiting program...")
