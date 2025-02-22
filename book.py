@@ -2,6 +2,7 @@ from loggers import logger
 
 
 class Address_Book_Info:
+
     def __init__(self, address_book_name):
 
         '''
@@ -16,11 +17,13 @@ class Address_Book_Info:
 
     def validate_zip(self):
 
+
         '''
         Description: Validate the format of the zip code.
         Parameters: None
         Return: Validated zip code (str)
         '''
+
 
         while True:
             zip_code = input("Enter the zip: ")
@@ -89,7 +92,7 @@ class Address_Book_Info:
         print("\nContact added successfully.")
 
     def search_by_city(self, city):
-
+       
         '''
         Description: Search for contacts by city name.
         Parameters: city (str)
@@ -119,7 +122,7 @@ class Address_Book_Info:
         return matching_contacts
 
     def display_contacts(self):
-
+        
         '''
         Description: Display all contacts in the address book.
         Parameters: None
@@ -179,7 +182,7 @@ class Address_Book_Info:
         Parameters: None
         Return: None
         '''
-
+       
         while True:
             first = input("Enter the first name of the contact to delete: ")
             last = input("Enter the last name of the contact to delete: ")
@@ -207,8 +210,22 @@ class Address_Book_Info:
             self.add_contact()
         logger.info("Successfully added multiple contacts.")
 
+    def sort_contacts_by_name(self):
+
+        '''
+        Description: Sort contacts alphabetically by first name.
+        Parameters: None
+        Return: None
+        '''
+
+        logger.info("Sorting contacts by name.")
+        self.contacts.sort(key=lambda x: x['first_name'].lower())
+        print("\nContacts sorted by name successfully.")
+        self.display_contacts()
+
 
 class Address_Book_Manager:
+
     def __init__(self):
 
         '''
@@ -340,13 +357,11 @@ class Address_Book_Manager:
 
         results = []
         for book_name, book in self.address_books.items():
-            
             city_matches = book.search_by_city(search_query)
             for contact in city_matches:
                 contact_info = {**contact, 'Address Book': book_name}
                 results.append(contact_info)
 
-            
             state_matches = book.search_by_state(search_query)
             for contact in state_matches:
                 contact_info = {**contact, 'Address Book': book_name}
@@ -366,15 +381,16 @@ class Address_Book_Manager:
                 print(f"{i}. {contact}")
         else:
             print(f"No contacts found in '{search_query}'.")
+        print(f"total count is : {len(unique_results)}")
 
     def main(self):
-
+       
         '''
         Description: Provide user choices to manage multiple address books.
         Parameters: None
         Return: None
         '''
-
+        
         while True:
             print("\n1. Create a new address book")
             print("2. Add a contact to an address book")
@@ -386,11 +402,12 @@ class Address_Book_Manager:
             print("8. Search person by city across all address books")
             print("9. Search person by state across all address books")
             print("10. Search person by city or state across all address books")
+            print("11. Sort contacts by name in an address book")
 
             choice = input("Enter your choice: ")
             if choice == '1':
                 self.create_address_book()
-            elif choice in {'2', '3', '4', '5', '6'}:
+            elif choice in {'2', '3', '4', '5', '6', '11'}:
                 book = self.select_address_book()
                 if book:
                     if choice == '2':
@@ -403,6 +420,8 @@ class Address_Book_Manager:
                         book.delete_contact()
                     elif choice == '6':
                         book.add_multiple_contacts()
+                    elif choice == '11':
+                        book.sort_contacts_by_name()
             elif choice == '7':
                 logger.info("User exited the program.")
                 print("Exiting program...")
@@ -414,7 +433,7 @@ class Address_Book_Manager:
             elif choice == '10':
                 self.search_person_city_state()
             else:
-                logger.warning("Invalid choice. Please enter a number between 1 and 10.")
+                logger.warning("Invalid choice. Please enter a number between 1 and 11.")
                 print("Invalid choice. Try again.")
 
 
