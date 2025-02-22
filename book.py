@@ -366,6 +366,7 @@ class Address_Book_Manager:
                 print(f"{i}. {contact}")
         else:
             print(f"No contacts found in '{search_query}'.")
+        print(f"total count is : {len(unique_results)}")
 
     def main(self):
 
@@ -404,6 +405,7 @@ class Address_Book_Manager:
                     elif choice == '6':
                         book.add_multiple_contacts()
             elif choice == '7':
+
                 logger.info("User exited the program.")
                 print("Exiting program...")
                 break
