@@ -1,5 +1,6 @@
 from loggers import logger
 import os
+import csv
 
 
 class Address_Book_Info:
@@ -241,43 +242,46 @@ class Address_Book_Info:
 class Address_Book_Manager:
 
     def __init__(self):
-
-        '''
+        """
         Description: Initialize an empty dictionary for storing multiple address books.
         Parameters: None
         Return: None
-        '''
-
+        """
         logger.info("Initializing Address_Book_Manager")
         self.address_books = {}
-        self.filename = "address_book.txt"
-        self.load_from_file()
-    
-    def save_to_file(self):
+        self.filename = "address_book.csv"  
+        self.load_from_csv()  
+
+    def save_to_csv(self):
 
         """
-        Description:Write the address book data into a file.
-        Parameters:None
-        Return:None
+        Description: Write the address book data into a CSV file.
+        Parameters: None
+        Return: None
         """
 
         try:
-            with open(self.filename, "w") as file:
+            with open(self.filename, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["address book", "first_name", "last_name", "city", "state", "zip", "phone number", "email"])
+
                 for name, book in self.address_books.items():
-                    file.write(f"Address Book: {name}\n")
                     for contact in book.contacts:
-                        file.write(f"{contact['first_name']} {contact['last_name']}, {contact['city']}, {contact['state']}, {contact['zip']}, {contact['phone_number']}, {contact['mail']}\n")
-                    file.write("\n")
-            logger.info("Address book saved successfully.")
-            print("Address book saved successfully.")
+                        writer.writerow([
+                            name, contact["first_name"], contact["last_name"], 
+                            contact["city"], contact["state"], contact["zip"], 
+                            contact["phone_number"], contact["mail"]
+                        ])
+            logger.info("Address book saved successfully to CSV.")
+            print("Address book saved successfully to CSV.")
         except Exception as e:
-            logger.warning(f"Error saving to file: {e}")
-            print(f"Error saving to file: {e}")
-    
-    def load_from_file(self):
+            logger.warning(f"Error saving to CSV: {e}")
+            print(f"Error saving to CSV: {e}")
+
+    def load_from_csv(self):
 
         """
-        Description:Read the address book data from the file.
+        Description: Read the address book data from the CSV file.
         Parameters: None
         Return: None
         """
@@ -288,31 +292,30 @@ class Address_Book_Manager:
                 return
             
             with open(self.filename, "r") as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip the header row
+
                 self.address_books.clear()
-                current_book = None
-                for line in file:
-                    line = line.strip()
-                    if line.startswith("Address Book:"):
-                        current_book = line.split(": ")[1]
-                        self.address_books[current_book] = Address_Book_Info(current_book)
-                    elif line and current_book:
-                        parts = line.split(", ")
-                        if len(parts) == 6:
-                            first_name, last_name = parts[0].split(" ")
-                            city, state, zip_code, phone_number, mail = parts[1:]
-                            contact = {
-                                'first_name': first_name,
-                                'last_name': last_name,
-                                'city': city,
-                                'state': state,
-                                'zip': zip_code,
-                                'phone_number': phone_number,
-                                'mail': mail
-                            }
-                            self.address_books[current_book].contacts.append(contact)
-            print("Address book loaded successfully.")
+                for row in reader:
+                    if len(row) == 8:
+                        book_name, first_name, last_name, city, state, zip_code, phone_number, mail = row
+                        if book_name not in self.address_books:
+                            self.address_books[book_name] = Address_Book_Info(book_name)
+
+                        contact = {
+                            "first_name": first_name,
+                            "last_name": last_name,
+                            "city": city,
+                            "state": state,
+                            "zip": zip_code,
+                            "phone_number": phone_number,
+                            "mail": mail
+                        }
+                        self.address_books[book_name].contacts.append(contact)
+
+            print("Address book loaded successfully from CSV.")
         except Exception as e:
-            print(f"Error loading file: {e}")
+            print(f"Error loading CSV file: {e}")
 
     def create_address_book(self):
 
@@ -515,9 +518,9 @@ class Address_Book_Manager:
             elif choice == '10':
                 self.search_person_city_state()
             elif choice == '13':
-                self.save_to_file()  
+                self.save_to_csv()  
             elif choice == '14':
-                self.load_from_file()
+                self.load_from_csv()
             else:
                 logger.warning("Invalid choice. Please enter a number between 1 and 11.")
                 print("Invalid choice. Try again.")
