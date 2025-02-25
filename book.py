@@ -1,4 +1,5 @@
 from loggers import logger
+import os
 
 
 class Address_Book_Info:
@@ -249,6 +250,69 @@ class Address_Book_Manager:
 
         logger.info("Initializing Address_Book_Manager")
         self.address_books = {}
+        self.filename = "address_book.txt"
+        self.load_from_file()
+    
+    def save_to_file(self):
+
+        """
+        Description:Write the address book data into a file.
+        Parameters:None
+        Return:None
+        """
+
+        try:
+            with open(self.filename, "w") as file:
+                for name, book in self.address_books.items():
+                    file.write(f"Address Book: {name}\n")
+                    for contact in book.contacts:
+                        file.write(f"{contact['first_name']} {contact['last_name']}, {contact['city']}, {contact['state']}, {contact['zip']}, {contact['phone_number']}, {contact['mail']}\n")
+                    file.write("\n")
+            logger.info("Address book saved successfully.")
+            print("Address book saved successfully.")
+        except Exception as e:
+            logger.warning(f"Error saving to file: {e}")
+            print(f"Error saving to file: {e}")
+    
+    def load_from_file(self):
+
+        """
+        Description:Read the address book data from the file.
+        Parameters: None
+        Return: None
+        """
+
+        try:
+            if not os.path.exists(self.filename):
+                print("No previous address book found, starting fresh.")
+                return
+            
+            with open(self.filename, "r") as file:
+                self.address_books.clear()
+                current_book = None
+                for line in file:
+                    line = line.strip()
+                    if line.startswith("Address Book:"):
+                        current_book = line.split(": ")[1]
+                        self.address_books[current_book] = Address_Book_Info(current_book)
+                    elif line and current_book:
+                        parts = line.split(", ")
+                        if len(parts) == 6:
+                            first_name, last_name = parts[0].split(" ")
+                            city, state, zip_code, phone_number, mail = parts[1:]
+                            contact = {
+                                'first_name': first_name,
+                                'last_name': last_name,
+                                'city': city,
+                                'state': state,
+                                'zip': zip_code,
+                                'phone_number': phone_number,
+                                'mail': mail
+                            }
+                            self.address_books[current_book].contacts.append(contact)
+            print("Address book loaded successfully.")
+        except Exception as e:
+            print(f"Error loading file: {e}")
 
     def create_address_book(self):
 
@@ -417,6 +481,8 @@ class Address_Book_Manager:
             print("10. Search person by city or state across all address books")
             print("11. Sort contacts by name in an address book")
             print("12. sort contact by state in the address book")
+            print("13. Save address book to file")
+            print("14. Load address book from file")
 
             choice = input("Enter your choice: ")
             if choice == '1':
@@ -448,10 +514,13 @@ class Address_Book_Manager:
                 self.search_person_with_state()
             elif choice == '10':
                 self.search_person_city_state()
+            elif choice == '13':
+                self.save_to_file()  
+            elif choice == '14':
+                self.load_from_file()
             else:
                 logger.warning("Invalid choice. Please enter a number between 1 and 11.")
                 print("Invalid choice. Try again.")
-
 
 if __name__ == '__main__':
     Address_Book_Manager().main()
