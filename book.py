@@ -1,7 +1,7 @@
 from loggers import logger
 import os
 import csv
-
+import json
 
 class Address_Book_Info:
 
@@ -242,80 +242,63 @@ class Address_Book_Info:
 class Address_Book_Manager:
 
     def __init__(self):
+
         """
         Description: Initialize an empty dictionary for storing multiple address books.
         Parameters: None
         Return: None
         """
+
         logger.info("Initializing Address_Book_Manager")
         self.address_books = {}
-        self.filename = "address_book.csv"  
-        self.load_from_csv()  
+        self.filename = "address_book.json"  
+        self.load_from_json()  
 
-    def save_to_csv(self):
+    def save_to_json(self):
 
         """
-        Description: Write the address book data into a CSV file.
+        Description: Write the address book data into a JSON file.
         Parameters: None
         Return: None
         """
 
         try:
-            with open(self.filename, "w", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(["address book", "first_name", "last_name", "city", "state", "zip", "phone number", "email"])
+            data = {name: book.contacts for name, book in self.address_books.items()}
 
-                for name, book in self.address_books.items():
-                    for contact in book.contacts:
-                        writer.writerow([
-                            name, contact["first_name"], contact["last_name"], 
-                            contact["city"], contact["state"], contact["zip"], 
-                            contact["phone_number"], contact["mail"]
-                        ])
-            logger.info("Address book saved successfully to CSV.")
-            print("Address book saved successfully to CSV.")
+            with open("address_book.json", "w") as file:
+                json.dump(data, file, indent=4)
+
+            logger.info("Address book saved successfully to JSON.")
+            print("Address book saved successfully to JSON.")
         except Exception as e:
-            logger.warning(f"Error saving to CSV: {e}")
-            print(f"Error saving to CSV: {e}")
+            logger.warning(f"Error saving to JSON: {e}")
+            print(f"Error saving to JSON: {e}")
 
-    def load_from_csv(self):
+    def load_from_json(self):
 
         """
-        Description: Read the address book data from the CSV file.
+        Description: Read the address book data from a JSON file.
         Parameters: None
         Return: None
         """
-
+        
         try:
-            if not os.path.exists(self.filename):
+            if not os.path.exists("address_book.json"):
                 print("No previous address book found, starting fresh.")
                 return
-            
-            with open(self.filename, "r") as file:
-                reader = csv.reader(file)
-                next(reader)  # Skip the header row
 
-                self.address_books.clear()
-                for row in reader:
-                    if len(row) == 8:
-                        book_name, first_name, last_name, city, state, zip_code, phone_number, mail = row
-                        if book_name not in self.address_books:
-                            self.address_books[book_name] = Address_Book_Info(book_name)
+            with open("address_book.json", "r") as file:
+                data = json.load(file)
 
-                        contact = {
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "city": city,
-                            "state": state,
-                            "zip": zip_code,
-                            "phone_number": phone_number,
-                            "mail": mail
-                        }
-                        self.address_books[book_name].contacts.append(contact)
+            self.address_books.clear()
+            for book_name, contacts in data.items():
+                self.address_books[book_name] = Address_Book_Info(book_name)
+                self.address_books[book_name].contacts = contacts
 
-            print("Address book loaded successfully from CSV.")
+            print("Address book loaded successfully from JSON.")
         except Exception as e:
-            print(f"Error loading CSV file: {e}")
+            print(f"Error loading JSON file: {e}")
+
 
     def create_address_book(self):
 
@@ -484,8 +467,8 @@ class Address_Book_Manager:
             print("10. Search person by city or state across all address books")
             print("11. Sort contacts by name in an address book")
             print("12. sort contact by state in the address book")
-            print("13. Save address book to file")
-            print("14. Load address book from file")
+            print("13. Save address book to json")
+            print("14. Load address book from json")
 
             choice = input("Enter your choice: ")
             if choice == '1':
@@ -518,9 +501,9 @@ class Address_Book_Manager:
             elif choice == '10':
                 self.search_person_city_state()
             elif choice == '13':
-                self.save_to_csv()  
+                self.save_to_json()  
             elif choice == '14':
-                self.load_from_csv()
+                self.load_from_json()
             else:
                 logger.warning("Invalid choice. Please enter a number between 1 and 11.")
                 print("Invalid choice. Try again.")
